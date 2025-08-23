@@ -42,3 +42,37 @@ exports.uploadQuestions = async (req, res) => {
         res.status(500).send('Server Error: Invalid JSON format or data.');
     }
 };
+
+exports.updateQuestion = async (req, res) => {
+    try{
+        let question = await Question.findById(req.params.questionId);
+        if (!question) return res.status(404).json({ msg: 'Question not found' });
+
+        if(question.createdBy.toString() !== req.user.id) {
+            return res.status(401).json({ msg: 'Not Authorized' });
+        }
+        question = await Question.findByIdAndUpdate(req.params.questionId, { $set: req.body }, { new: true });
+        res.json(question);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+};
+
+exports.deleteQuestion = async (req, res) => {
+    try {
+        const question = await Question.findById(req.params.questionId);
+        if (!question) return res.status(404).json({ msg: 'Question not found' });
+
+        if (question.createdBy.toString() !== req.user.id) {
+            return res.status(401).json({ msg: 'Not authorized' });
+        }
+
+        await Question.findByIdAndDelete(req.params.questionId);
+        res.json({ msg: 'Question removed' });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+};
+
