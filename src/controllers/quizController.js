@@ -48,3 +48,43 @@ exports.getQuizById = async (req, res) => {
         res.status(500).send('Server Error');
     }
 };
+
+exports.updateQuiz = async (req, res) => {
+    try{
+        let quiz = await Quiz.findById(req.params.quizId).populate('questions');
+        if (!quiz) {
+            return res.status(404).json({ msg: 'Quiz not found' });
+        }
+
+        if (quiz.createdBy.toString() !== req.user.id) {
+            return res.status(401).json({ msg: 'User not authorized' });
+        }
+
+        quiz = await Quiz.findByIdAndUpdate(req.params.quizId, {$set: req.body}, {new: true});
+        res.json(quiz);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+};
+
+exports.deleteQuiz = async (req, res) => {
+    try{
+        const quiz = await Quiz.findById(req.params.quizId).populate('questions');
+        if (!quiz) {
+            return res.status(404).json({ msg: 'Quiz not found' });
+        }
+        if (quiz.createdBy.toString() !== req.user.id) {
+            return res.status(401).json({ msg: 'User not authorized' });
+        }
+
+        await Quiz.findByIdAndDelete(req.params.quizId).populate('questions');
+        res.json({
+            message: 'Quiz deleted',
+        });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+};
+
