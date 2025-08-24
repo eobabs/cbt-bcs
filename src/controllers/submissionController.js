@@ -2,7 +2,7 @@ const Submission =require('../models/Submission');
 const Quiz = require('../models/Quiz');
 const Assignment = require('../models/Assignment');
 
-exports.submitQquiz = async (req, res) => {
+exports.submitQuiz = async (req, res) => {
     const { quizId } = req.params;
     const { answers, startedAt } = req.body;
 
