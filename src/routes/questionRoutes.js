@@ -3,7 +3,7 @@ const router = express.Router();
 const multer = require("multer");
 const auth = require("../middleware/authMiddleware");
 
-const { createQuestion, uploadQuestions, updateQuestion, deleteQuestion } = require("../controllers/QuestionController");
+const { createQuestion, uploadQuestions, updateQuestion, deleteQuestion } = require("../controllers/questionController");
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
