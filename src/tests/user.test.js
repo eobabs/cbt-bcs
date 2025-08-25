@@ -1,9 +1,7 @@
 const request = require('supertest');
-const mongoose = require('mongoose');
 const app = require('/server');
 const User = require('../models/User');
-const Quiz = require('../models/Quiz');
-const Question = require('../models/Question');
+
 const jwt = require('jsonwebtoken');
 
 process.env.JWT_SECRET = 'testsecret';
