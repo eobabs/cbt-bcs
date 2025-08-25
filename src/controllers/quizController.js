@@ -51,12 +51,12 @@ exports.getQuizById = async (req, res) => {
 
 exports.updateQuiz = async (req, res) => {
     try{
-        let quiz = await Quiz.findById(req.params.quizId).populate('questions');
+        let quiz = await Quiz.findById(req.params.quizId);
         if (!quiz) {
             return res.status(404).json({ msg: 'Quiz not found' });
         }
 
-        if (quiz.createdBy.toString() !== req.user.id) {
+        if (!quiz.createdBy || !req.user || quiz.createdBy.toString() !== req.user.id) {
             return res.status(401).json({ msg: 'User not authorized' });
         }
 
@@ -70,7 +70,7 @@ exports.updateQuiz = async (req, res) => {
 
 exports.deleteQuiz = async (req, res) => {
     try{
-        const quiz = await Quiz.findById(req.params.quizId).populate('questions');
+        const quiz = await Quiz.findById(req.params.quizId);
         if (!quiz) {
             return res.status(404).json({ msg: 'Quiz not found' });
         }
@@ -78,7 +78,7 @@ exports.deleteQuiz = async (req, res) => {
             return res.status(401).json({ msg: 'User not authorized' });
         }
 
-        await Quiz.findByIdAndDelete(req.params.quizId).populate('questions');
+        await Quiz.findByIdAndDelete(req.params.quizId);
         res.json({
             message: 'Quiz deleted',
         });

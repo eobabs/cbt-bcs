@@ -1,11 +1,8 @@
 const request = require('supertest');
-const express = require('express');
-const authRoutes = require('../routes/authRoutes');
+const app = require('/server');
 const User = require('../models/User');
 
-const app = express();
-app.use(express.json());
-app.use('/api/auth', authRoutes);
+
 
 process.env.JWT_SECRET = 'testsecret';
 
