@@ -33,4 +33,5 @@ jobs:
       - name: Run tests
         run: npm test -- --ci --runInBand
         env:
+          NODE_ENV: test
           CI: true
