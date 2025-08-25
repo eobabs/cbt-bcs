@@ -49,7 +49,7 @@ exports.updateQuestion = async (req, res) => {
         if (!question) return res.status(404).json({ msg: 'Question not found' });
 
         if(question.createdBy.toString() !== req.user.id) {
-            return res.status(401).json({ msg: 'Not Authorized' });
+            return res.status(401).json({ msg: 'User not Authorized' });
         }
         question = await Question.findByIdAndUpdate(req.params.questionId, { $set: req.body }, { new: true });
         res.json(question);
@@ -65,7 +65,7 @@ exports.deleteQuestion = async (req, res) => {
         if (!question) return res.status(404).json({ msg: 'Question not found' });
 
         if (question.createdBy.toString() !== req.user.id) {
-            return res.status(401).json({ msg: 'Not authorized' });
+            return res.status(401).json({ msg: 'User not authorized' });
         }
 
         await Question.findByIdAndDelete(req.params.questionId);
