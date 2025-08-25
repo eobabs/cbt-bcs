@@ -1,13 +1,15 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
-const connectDB = require('./src/config/databaseConfig');
+const connectDatabase = require('./src/config/databaseConfig');
 
 dotenv.config();
 
 const app = express();
 
-connectDB();
+if (process.env.NODE_ENV !== 'test') {
+    connectDatabase();
+}
 
 app.use(cors());
 app.use(express.json());
