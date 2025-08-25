@@ -2,8 +2,6 @@ const request = require('supertest');
 const app = require('/server');
 const User = require('../models/User');
 
-
-
 process.env.JWT_SECRET = 'testsecret';
 
 
