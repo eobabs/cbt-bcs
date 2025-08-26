@@ -1,4 +1,6 @@
 const Question = require('../models/Question');
+const csv = require('csv-parser')
+const stream = require('stream');
 
 exports.createQuestion = async (req, res) => {
     const { questionText, questionType, options, answer } = req.body;
@@ -25,8 +27,42 @@ exports.uploadQuestions = async (req, res) => {
         return res.status(400).json({ msg: 'No file uploaded' });
     }
 
+    const fileType = req.body.fileType || 'json';
+    const questionsToUpload = [];
+
     try {
-        const questionsToUpload = JSON.parse(req.file.buffer.toString());
+        if (fileType === 'json') {
+            const extractedData = JSON.parse(req.file.buffer.toString());
+            if (!Array.isArray(parsedData)) {
+                throw new Error('Invalid JSON format: The file must contain an array of questions.');
+            }
+            questionsToUpload.push(...extractedData);
+        } else if(fileType === 'csv') {
+            await new Promise((resolve, reject) => {
+                const bufferStream = new stream.PassThrough();
+                bufferStream.end(req.file.buffer);
+
+                bufferStream
+                    .pipe(csv())
+                    .on('data', (row) => {
+                        const question = {
+                            questionText: row.questionText,
+                            questionType: row.questionType,
+                            answer: row.answer,
+                            options: row.options ? row.options.split(',').map(opt => opt.trim()) : []
+                        };
+                        questionsToUpload.push(question);
+                    })
+                    .on('end', resolve)
+                    .on('error', reject);
+            });
+        } else {
+            return res.status(400).json({ msg: 'Unsupported file type. Please use JSON or CSV.' });
+        }
+
+        if (questionsToUpload.length === 0) {
+            return res.status(400).json({ msg: 'No questions found in the uploaded file.' });
+        }
         const questionsWithCreator = questionsToUpload.map(q => ({
             ...q,
             createdBy: req.user.id
@@ -39,7 +75,7 @@ exports.uploadQuestions = async (req, res) => {
         });
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error: Invalid JSON format or data.');
+        res.status(500).send('Server Error: The file could not be processed. Please check the format and data.');
     }
 };
 
