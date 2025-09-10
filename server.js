@@ -19,12 +19,12 @@ app.use('/api/questions', require('./src/routes/questionRoutes'));
 app.use('/api/quizzes', require('./src/routes/quizRoutes'));
 app.use('/api/assignments', require('./src/routes/assignmentRoutes'));
 app.use('/api/submissions', require('./src/routes/submissionRoutes'));
-
+app.use('/api/session', require('./src/routes/testSessionRoutes'));
+app.use('/api/analytics', require('./src/routes/analyticsRoutes'));
 
 const PORT = process.env.PORT || 5000;
 
 module.exports = app;
 if (process.env.NODE_ENV !== 'test') {
     app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
-
 }
